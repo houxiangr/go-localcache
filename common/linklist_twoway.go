@@ -58,7 +58,7 @@ func (this *LinklistTwoWay) DelNode(targetNode *LinkNode) {
 	targetNode = nil
 }
 
-func (this *LinklistTwoWay)NotLinkNode(targetNode *LinkNode){
+func (this *LinklistTwoWay) NotLinkNode(targetNode *LinkNode) {
 	preNode := targetNode.pre
 	nextNode := targetNode.next
 
@@ -77,7 +77,7 @@ func (this *LinklistTwoWay)NotLinkNode(targetNode *LinkNode){
 	}
 }
 
-func (this *LinklistTwoWay)MoveNodeToHead(targetNode *LinkNode){
+func (this *LinklistTwoWay) MoveNodeToHead(targetNode *LinkNode) {
 	if targetNode == this.head {
 		return
 	}
@@ -98,7 +98,7 @@ func (this *LinklistTwoWay)MoveNodeToHead(targetNode *LinkNode){
 	}
 }
 
-func (this *LinklistTwoWay)LinklistToSlice()[]LinkNode{
+func (this *LinklistTwoWay) LinklistToSlice() []LinkNode {
 	node := this.GetHead()
 	res := []LinkNode{}
 	for node != nil {

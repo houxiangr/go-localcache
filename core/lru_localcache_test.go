@@ -39,30 +39,30 @@ func TestLRU_localcache_Get_And_Set(t *testing.T) {
 func initFillLruCache() {
 	localcache = LRU_localcache{}
 	localcache.Start(10)
-	localcache.Set("1",1)
-	localcache.Set("2",2)
-	localcache.Set("3",3)
-	localcache.Set("4",4)
-	localcache.Set("5",5)
-	localcache.Set("6",6)
-	localcache.Set("7",7)
-	localcache.Set("8",8)
-	localcache.Set("9",9)
-	localcache.Set("10",10)
+	localcache.Set("1", 1)
+	localcache.Set("2", 2)
+	localcache.Set("3", 3)
+	localcache.Set("4", 4)
+	localcache.Set("5", 5)
+	localcache.Set("6", 6)
+	localcache.Set("7", 7)
+	localcache.Set("8", 8)
+	localcache.Set("9", 9)
+	localcache.Set("10", 10)
 }
 
 func TestLRU_localcache_Set_Fill(t *testing.T) {
 	initFillLruCache()
 	tests := []struct {
-		name      string
-		key       string
-		wantvalue interface{}
+		name            string
+		key             string
+		wantvalue       interface{}
 		wantNotExistKey string
 	}{
 		{
-			name:      "set cache and get cache",
-			key:       "11",
-			wantvalue: 11,
+			name:            "set cache and get cache",
+			key:             "11",
+			wantvalue:       11,
 			wantNotExistKey: "1",
 		},
 	}
@@ -81,7 +81,7 @@ func TestLRU_localcache_Set_Fill(t *testing.T) {
 	}
 }
 
-func TestLRU_localcache_GetMoveHead(t *testing.T){
+func TestLRU_localcache_GetMoveHead(t *testing.T) {
 	initFillLruCache()
 	tests := []struct {
 		name      string
