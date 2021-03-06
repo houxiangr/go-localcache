@@ -1,7 +1,7 @@
 package core
 
 type Localcache interface {
-	Start()
+	Start(size int64)
 	Get(key string)interface{} //get value
 	Set(key string,value interface{}) //set value
 	DumpFile() //save cache in file
@@ -12,7 +12,7 @@ const(
 	LRU = "LRU"
 )
 
-func GetLocalcache(outType string)(Localcache,error){
+func GetLocalcache(outType string,size int64)(Localcache,error){
 	var localcache Localcache
 	switch outType{
 	case LRU:
@@ -20,6 +20,7 @@ func GetLocalcache(outType string)(Localcache,error){
 	default:
 		return nil,nil
 	}
-	localcache.Start()
+
+	localcache.Start(size)
 	return localcache,nil
 }

@@ -1,83 +1,183 @@
 package common
 
 import (
+	"reflect"
 	"testing"
 )
 
 var linklist LinklistTwoWay
 
-func init(){
+func initLinklist() {
 	linklist = LinklistTwoWay{}
+	linklist.SetHead("5", 5)
+	linklist.SetHead("4", 4)
+	linklist.SetHead("3", 3)
+	linklist.SetHead("2", 2)
+	linklist.SetHead("1", 1)
 }
 
-func TestLinklist(t *testing.T){
-	// 默认都为空
-	if linklist.GetHead() != nil || linklist.GetTail() != nil {
-		t.Fail()
+func TestGetHeadTail(t *testing.T) {
+	initLinklist()
+	tests := []struct {
+		name     string
+		wantHead interface{}
+		wantTail interface{}
+	}{
+		{
+			name:     "get head and tail value",
+			wantHead: 1,
+			wantTail: 5,
+		},
 	}
-	if linklist.GetHead().GetValue() != nil || linklist.GetTail().GetValue() != nil {
-		t.Fail()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			head := linklist.GetHead()
+			if !reflect.DeepEqual(head.GetValue(), tt.wantHead) {
+				t.Errorf("GetHead() = %v, want %v", head.GetValue(), tt.wantHead)
+			}
+			tail := linklist.GetTail()
+			if !reflect.DeepEqual(tail.GetValue(), tt.wantTail) {
+				t.Errorf("GetTail() = %v, want %v", tail.GetValue(), tt.wantTail)
+			}
+		})
 	}
+}
 
-	//插入1
-	//1
-	linklist.SetHead(1)
-	if linklist.GetHead().GetValue() != 1 {
-		t.Fail()
+func TestGetHeadTail2(t *testing.T) {
+	emptyLinklist := LinklistTwoWay{}
+	tests := []struct {
+		name     string
+		wantHead *LinkNode
+		wantTail *LinkNode
+	}{
+		{
+			name:     "get empty linklist",
+			wantHead: nil,
+			wantTail: nil,
+		},
 	}
-	if linklist.GetTail().GetValue() != 1 {
-		t.Fail()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			head := emptyLinklist.GetHead()
+			if !reflect.DeepEqual(head, tt.wantHead) {
+				t.Errorf("GetHead() = %v, want %v", head, tt.wantHead)
+			}
+			tail := emptyLinklist.GetTail()
+			if !reflect.DeepEqual(tail, tt.wantTail) {
+				t.Errorf("GetTail() = %v, want %v", tail, tt.wantTail)
+			}
+		})
 	}
+}
 
-	//插入2
-	//2-1
-	linklist.SetHead(2)
-	if linklist.GetHead().GetNext().GetValue() != 1{
-		t.Fail()
+func TestSetHeadTail(t *testing.T){
+	initLinklist()
+	tests := []struct {
+		name     string
+		wantHead interface{}
+		wantTail interface{}
+	}{
+		{
+			name:     "set head and tail value",
+			wantHead: 0,
+			wantTail: 6,
+		},
 	}
-	if linklist.GetTail().GetPre().GetValue() != 2{
-		t.Fail()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			linklist.SetHead("0",0)
+			linklist.SetTail("6",6)
+			head := linklist.GetHead()
+			if !reflect.DeepEqual(head.GetValue(), tt.wantHead) {
+				t.Errorf("GetHead() = %v, want %v", head.GetValue(), tt.wantHead)
+			}
+			tail := linklist.GetTail()
+			if !reflect.DeepEqual(tail.GetValue(), tt.wantTail) {
+				t.Errorf("GetTail() = %v, want %v", tail.GetValue(), tt.wantTail)
+			}
+		})
 	}
+}
 
-	//插入3
-	//2-1-3
-	linklist.SetTail(3)
-	if linklist.GetHead().GetNext().GetValue() != 1{
-		t.Fail()
+func TestDelNode(t *testing.T){
+	initLinklist()
+	tests := []struct {
+		name     string
+		delNode *LinkNode
+		wantNext *LinkNode
+		wantHead *LinkNode
+		wantTail *LinkNode
+	}{
+		//1-3-4-5
+		{
+			name:     "del middle node",
+			delNode: linklist.GetHead().GetNext(),
+			wantNext: linklist.GetHead().GetNext().GetNext(),
+			wantHead: linklist.GetHead(),
+			wantTail: linklist.GetTail(),
+		},
+		//3-4-5
+		{
+			name:     "del head node",
+			delNode: linklist.GetHead(),
+			wantNext: linklist.GetHead().GetNext().GetNext().GetNext(),
+			wantHead: linklist.GetHead().GetNext().GetNext(),
+			wantTail: linklist.GetTail(),
+		},
+		//3-4
+		{
+			name:     "del tail node",
+			delNode: linklist.GetTail(),
+			wantNext: linklist.GetHead().GetNext().GetNext().GetNext(),
+			wantHead: linklist.GetHead().GetNext().GetNext(),
+			wantTail: linklist.GetTail().GetPre(),
+		},
 	}
-	if linklist.GetTail().GetPre().GetValue() != 1{
-		t.Fail()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			linklist.DelNode(tt.delNode)
+			node := linklist.GetHead().GetNext()
+			if !reflect.DeepEqual(node, tt.wantNext) {
+				t.Errorf("GetNext() = %v, want %v", node.GetValue(), tt.wantNext.GetValue())
+			}
+			head := linklist.GetHead()
+			if !reflect.DeepEqual(head, tt.wantHead) {
+				t.Errorf("GetHead() = %v, want %v", head.GetValue(), tt.wantHead.GetValue())
+			}
+			tail := linklist.GetTail()
+			if !reflect.DeepEqual(tail, tt.wantTail) {
+				t.Errorf("GetTail() = %v, want %v", tail.GetValue(), tt.wantTail.GetValue())
+			}
+		})
 	}
+}
 
-	//删除1
-	//2-3
-	linklist.DelNode(linklist.GetHead().GetNext())
-	if linklist.GetHead().GetNext().GetValue() != 3{
-		t.Fail()
+func TestMoveNodeToHead(t *testing.T) {
+	initLinklist()
+	tests := []struct {
+		name       string
+		wantHead   *LinkNode
+		wantNext   *LinkNode
+		moveTarget *LinkNode
+	}{
+		{
+			name:       "get head and tail value",
+			wantHead:   linklist.GetHead().GetNext(),
+			wantNext:   linklist.GetHead(),
+			moveTarget: linklist.GetHead().GetNext(),
+		},
 	}
-	if linklist.GetTail().GetPre().GetValue() != 2{
-		t.Fail()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			linklist.MoveNodeToHead(tt.moveTarget)
+			head := linklist.GetHead()
+			if !reflect.DeepEqual(head, tt.wantHead) {
+				t.Errorf("GetHead() = %v, want %v", head.GetValue(), tt.wantHead.GetValue())
+			}
+			next := linklist.GetHead().GetNext()
+			if !reflect.DeepEqual(next, tt.wantNext) {
+				t.Errorf("GetNext() = %v, want %v", next.GetValue(), tt.wantNext.GetValue())
+			}
+		})
 	}
-
-	//删除2
-	//3
-	linklist.DelNode(linklist.GetHead())
-	if linklist.GetHead().GetValue() != 3{
-		t.Fail()
-	}
-	if linklist.GetTail().GetValue() != 3{
-		t.Fail()
-	}
-
-	//删除3
-	//
-	linklist.DelNode(linklist.GetTail())
-	if linklist.GetHead().GetValue() != nil{
-		t.Fail()
-	}
-	if linklist.GetTail().GetValue() != nil{
-		t.Fail()
-	}
-
-
 }

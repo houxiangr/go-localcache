@@ -6,7 +6,7 @@ import (
 )
 
 func main(){
-	localcache,_ := core.GetLocalcache(core.LRU)
+	localcache,_ := core.GetLocalcache(core.LRU,10)
 
 	localcache.Set("key","value")
 	fmt.Println(localcache.Get("key"))
