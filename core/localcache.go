@@ -6,6 +6,7 @@ type Localcache interface {
 	Set(key string,value interface{}) //set value
 	DumpFile() //save cache in file
 	ImportFile(filename string) //init cache from file
+	CacheToMap()map[string]interface{} // cache to map
 }
 
 const(

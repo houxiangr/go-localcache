@@ -98,6 +98,16 @@ func (this *LinklistTwoWay)MoveNodeToHead(targetNode *LinkNode){
 	}
 }
 
+func (this *LinklistTwoWay)LinklistToSlice()[]LinkNode{
+	node := this.GetHead()
+	res := []LinkNode{}
+	for node != nil {
+		res = append(res, *node)
+		node = node.GetNext()
+	}
+	return res
+}
+
 func NewLinkNode(key string, value interface{}) *LinkNode {
 	return &LinkNode{
 		key:   key,

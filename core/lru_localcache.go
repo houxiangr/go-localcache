@@ -19,12 +19,15 @@ func (this *LRU_localcache) Start(size int64) {
 	this.cacheMap = make(map[string]*common.LinkNode)
 	this.size =size
 }
-func (this LRU_localcache) Get(key string) interface{} {
+func (this *LRU_localcache) Get(key string) interface{} {
 	this.lock.Lock()
 	defer this.lock.Unlock()
 	res := this.cacheMap[key]
+	if res == nil {
+		return nil
+	}
 	this.linklistTwoWay.MoveNodeToHead(res)
-	return res
+	return res.GetValue()
 }
 func (this *LRU_localcache) Set(key string, value interface{}) {
 	this.lock.Lock()
@@ -33,7 +36,7 @@ func (this *LRU_localcache) Set(key string, value interface{}) {
 		this.slowSet(key,value)
 		return
 	}
-	this.size++
+	this.used++
 
 	this.linklistTwoWay.SetHead(key,value)
 	this.cacheMap[key] = this.linklistTwoWay.GetHead()
@@ -46,14 +49,20 @@ func (this *LRU_localcache) ImportFile(filename string) {
 }
 
 func (this *LRU_localcache)slowSet(key string,value interface{}){
-	this.lock.Lock()
-	defer this.lock.Unlock()
 	// del node
 	tailNode := this.linklistTwoWay.GetTail()
-	this.cacheMap[tailNode.GetKey()] = nil
+	delete(this.cacheMap,tailNode.GetKey())
 	this.linklistTwoWay.DelNode(tailNode)
 
 	// set node
 	this.linklistTwoWay.SetHead(key,value)
 	this.cacheMap[key] = this.linklistTwoWay.GetHead()
+}
+
+func (this *LRU_localcache)CacheToMap()map[string]interface{}{
+	res := make(map[string]interface{})
+	for k,v := range this.cacheMap{
+		res[k] = v.GetValue()
+	}
+	return res
 }
