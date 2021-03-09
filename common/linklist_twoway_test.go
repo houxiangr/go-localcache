@@ -181,3 +181,33 @@ func TestMoveNodeToHead(t *testing.T) {
 		})
 	}
 }
+
+func TestLinklistTwoWay_DelTailAndSetHead(t *testing.T) {
+	initLinklist()
+	tests := []struct {
+		name     string
+		wantHead interface{}
+		wantTail interface{}
+	}{
+		{
+			//0-1-2-3-4
+			name:     "del tail and set head",
+			wantHead: 0,
+			wantTail: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			linklist.DelTailAndSetHead("0",0)
+			head := linklist.GetHead()
+			if !reflect.DeepEqual(head.GetValue(), tt.wantHead) {
+				t.Errorf("GetHead() = %v, want %v", head.GetValue(), tt.wantHead)
+			}
+			tail := linklist.GetTail()
+			if !reflect.DeepEqual(tail.GetValue(), tt.wantTail) {
+				t.Errorf("GetTail() = %v, want %v", tail.GetValue(), tt.wantTail)
+			}
+		})
+	}
+}
+
