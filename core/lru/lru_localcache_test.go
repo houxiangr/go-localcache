@@ -7,10 +7,10 @@ import (
 	"testing"
 )
 
-var localcache LRU_localcache
+var localcache LRULocalcache
 
 func initEmptyLRUCache() {
-	localcache = LRU_localcache{}
+	localcache = LRULocalcache{}
 	localcache.Start(10)
 }
 
@@ -39,7 +39,7 @@ func TestLRU_localcache_Get_And_Set(t *testing.T) {
 }
 
 func initFillLruCache() {
-	localcache = LRU_localcache{}
+	localcache = LRULocalcache{}
 	localcache.Start(10)
 	localcache.Set("1", 1)
 	localcache.Set("2", 2)

@@ -16,6 +16,7 @@ func main() {
 	localcache.Set("5", "5")
 	fmt.Println(localcache.CacheToMap())
 }
+
 //package main
 //
 //import (
