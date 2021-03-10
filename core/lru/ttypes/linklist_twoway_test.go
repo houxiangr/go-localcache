@@ -1,4 +1,4 @@
-package common
+package ttypes
 
 import (
 	"reflect"
@@ -70,7 +70,7 @@ func TestGetHeadTail2(t *testing.T) {
 	}
 }
 
-func TestSetHeadTail(t *testing.T){
+func TestSetHeadTail(t *testing.T) {
 	initLinklist()
 	tests := []struct {
 		name     string
@@ -85,8 +85,8 @@ func TestSetHeadTail(t *testing.T){
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			linklist.SetHead("0",0)
-			linklist.SetTail("6",6)
+			linklist.SetHead("0", 0)
+			linklist.SetTail("6", 6)
 			head := linklist.GetHead()
 			if !reflect.DeepEqual(head.GetValue(), tt.wantHead) {
 				t.Errorf("GetHead() = %v, want %v", head.GetValue(), tt.wantHead)
@@ -99,11 +99,11 @@ func TestSetHeadTail(t *testing.T){
 	}
 }
 
-func TestDelNode(t *testing.T){
+func TestDelNode(t *testing.T) {
 	initLinklist()
 	tests := []struct {
 		name     string
-		delNode *LinkNode
+		delNode  *LinkNode
 		wantNext *LinkNode
 		wantHead *LinkNode
 		wantTail *LinkNode
@@ -111,7 +111,7 @@ func TestDelNode(t *testing.T){
 		//1-3-4-5
 		{
 			name:     "del middle node",
-			delNode: linklist.GetHead().GetNext(),
+			delNode:  linklist.GetHead().GetNext(),
 			wantNext: linklist.GetHead().GetNext().GetNext(),
 			wantHead: linklist.GetHead(),
 			wantTail: linklist.GetTail(),
@@ -119,7 +119,7 @@ func TestDelNode(t *testing.T){
 		//3-4-5
 		{
 			name:     "del head node",
-			delNode: linklist.GetHead(),
+			delNode:  linklist.GetHead(),
 			wantNext: linklist.GetHead().GetNext().GetNext().GetNext(),
 			wantHead: linklist.GetHead().GetNext().GetNext(),
 			wantTail: linklist.GetTail(),
@@ -127,7 +127,7 @@ func TestDelNode(t *testing.T){
 		//3-4
 		{
 			name:     "del tail node",
-			delNode: linklist.GetTail(),
+			delNode:  linklist.GetTail(),
 			wantNext: linklist.GetHead().GetNext().GetNext().GetNext(),
 			wantHead: linklist.GetHead().GetNext().GetNext(),
 			wantTail: linklist.GetTail().GetPre(),
@@ -198,7 +198,7 @@ func TestLinklistTwoWay_DelTailAndSetHead(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			linklist.DelTailAndSetHead("0",0)
+			linklist.DelTailAndSetHead("0", 0)
 			head := linklist.GetHead()
 			if !reflect.DeepEqual(head.GetValue(), tt.wantHead) {
 				t.Errorf("GetHead() = %v, want %v", head.GetValue(), tt.wantHead)
@@ -210,4 +210,3 @@ func TestLinklistTwoWay_DelTailAndSetHead(t *testing.T) {
 		})
 	}
 }
-

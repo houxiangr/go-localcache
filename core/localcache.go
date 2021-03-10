@@ -1,5 +1,7 @@
 package core
 
+import "github.com/houxiangr/go-localcache/core/lru"
+
 type Localcache interface {
 	Start(size int64)
 	Get(key string) interface{}         //get value
@@ -17,7 +19,7 @@ func GetLocalcache(outType string, size int64) (Localcache, error) {
 	var localcache Localcache
 	switch outType {
 	case LRU:
-		localcache = &LRU_localcache{}
+		localcache = &lru.LRU_localcache{}
 	default:
 		return nil, nil
 	}

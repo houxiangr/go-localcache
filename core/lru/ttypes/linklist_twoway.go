@@ -1,4 +1,4 @@
-package common
+package ttypes
 
 import (
 	"sync/atomic"
@@ -27,7 +27,7 @@ func (this LinklistTwoWay) GetTail() *LinkNode {
 }
 
 func (this *LinklistTwoWay) SetHead(key string, value interface{}) *LinkNode {
-	return this.setHead(key,value)
+	return this.setHead(key, value)
 }
 
 func (this *LinklistTwoWay) SetTail(key string, value interface{}) {
@@ -48,11 +48,11 @@ func (this *LinklistTwoWay) SetTail(key string, value interface{}) {
 }
 
 func (this *LinklistTwoWay) DelNode(targetNode *LinkNode) {
-	if targetNode == this.head{
+	if targetNode == this.head {
 		this.notLinkHead()
-	}else if targetNode == this.tail{
+	} else if targetNode == this.tail {
 		this.notLinkTail()
-	}else{
+	} else {
 		this.notLinkNode(targetNode)
 	}
 	targetNode = nil
@@ -63,11 +63,11 @@ func (this *LinklistTwoWay) MoveNodeToHead(targetNode *LinkNode) {
 		return
 	}
 	//not link target node
-	if targetNode == this.head{
+	if targetNode == this.head {
 		this.notLinkHead()
-	}else if targetNode == this.tail{
+	} else if targetNode == this.tail {
 		this.notLinkTail()
-	}else{
+	} else {
 		this.notLinkNode(targetNode)
 	}
 
@@ -85,12 +85,11 @@ func (this *LinklistTwoWay) MoveNodeToHead(targetNode *LinkNode) {
 	}
 }
 
-func (this *LinklistTwoWay) DelTailAndSetHead(key string,value interface{}) (*LinkNode){
+func (this *LinklistTwoWay) DelTailAndSetHead(key string, value interface{}) *LinkNode {
 	this.notLinkTail()
-	newNode := this.setHead(key,value)
-	return  newNode
+	newNode := this.setHead(key, value)
+	return newNode
 }
-
 
 func (this *LinklistTwoWay) setHead(key string, value interface{}) *LinkNode {
 	linkNode := LinkNode{
@@ -117,7 +116,7 @@ func (this *LinklistTwoWay) notLinkNode(targetNode *LinkNode) {
 	nextNode.pre = preNode
 }
 
-func (this *LinklistTwoWay) notLinkHead(){
+func (this *LinklistTwoWay) notLinkHead() {
 	if this.tail == this.head {
 		this.head = nil
 		this.tail = nil
@@ -128,13 +127,13 @@ func (this *LinklistTwoWay) notLinkHead(){
 	nextHead.pre = nil
 }
 
-func (this *LinklistTwoWay) notLinkTail(){
+func (this *LinklistTwoWay) notLinkTail() {
 	if this.tail == this.head {
 		this.head = nil
 		this.tail = nil
 		return
 	}
-	nextTail:= this.tail.pre
+	nextTail := this.tail.pre
 	this.tail = nextTail
 	nextTail.next = nil
 }
@@ -163,20 +162,20 @@ func (this *LinkNode) GetNext() *LinkNode {
 	return this.next
 }
 
-func (this *LinkNode)TrySetValue(newValue interface{}) {
+func (this *LinkNode) TrySetValue(newValue interface{}) {
 	for {
-		ptrThisValue :=&this.value
+		ptrThisValue := &this.value
 		thisValue := atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&ptrThisValue)))
-		if atomic.CompareAndSwapPointer((*unsafe.Pointer)(unsafe.Pointer(&ptrThisValue)),thisValue,unsafe.Pointer(&newValue)) {
+		if atomic.CompareAndSwapPointer((*unsafe.Pointer)(unsafe.Pointer(&ptrThisValue)), thisValue, unsafe.Pointer(&newValue)) {
 			return
 		}
 	}
 }
-func (this *LinkNode)SetValue(newValue interface{}) {
+func (this *LinkNode) SetValue(newValue interface{}) {
 	for {
-		ptrThisValue :=&this.value
+		ptrThisValue := &this.value
 		thisValue := atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&ptrThisValue)))
-		if atomic.CompareAndSwapPointer((*unsafe.Pointer)(unsafe.Pointer(&ptrThisValue)),thisValue,unsafe.Pointer(&newValue)) {
+		if atomic.CompareAndSwapPointer((*unsafe.Pointer)(unsafe.Pointer(&ptrThisValue)), thisValue, unsafe.Pointer(&newValue)) {
 			return
 		}
 	}

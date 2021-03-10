@@ -1,4 +1,4 @@
-package core
+package lru
 
 import (
 	"fmt"
@@ -107,18 +107,17 @@ func TestLRU_localcache_GetMoveHead(t *testing.T) {
 	}
 }
 
-
-func TestMutiGoroutine(t *testing.T){
+func TestMutiGoroutine(t *testing.T) {
 	initEmptyLRUCache()
 	wg := sync.WaitGroup{}
 	wg.Add(1000)
-	for i:=0;i<1000;i++{
-		go func(index int){
+	for i := 0; i < 1000; i++ {
+		go func(index int) {
 			defer wg.Done()
-			localcache.Set(fmt.Sprintf("muti_%d",index),fmt.Sprintf("muti_%d",index))
-			got := localcache.Get(fmt.Sprintf("muti_%d",index))
-			if got != nil && got != fmt.Sprintf("muti_%d",index){
-				t.Errorf("got = %+v,want = %s",got,fmt.Sprintf("muti_%d",index))
+			localcache.Set(fmt.Sprintf("muti_%d", index), fmt.Sprintf("muti_%d", index))
+			got := localcache.Get(fmt.Sprintf("muti_%d", index))
+			if got != nil && got != fmt.Sprintf("muti_%d", index) {
+				t.Errorf("got = %+v,want = %s", got, fmt.Sprintf("muti_%d", index))
 			}
 		}(i)
 	}

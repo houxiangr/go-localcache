@@ -1,7 +1,7 @@
-package core
+package lru
 
 import (
-	"github.com/houxiangr/go-localcache/common"
+	"github.com/houxiangr/go-localcache/core/lru/ttypes"
 	"sync"
 )
 
@@ -9,9 +9,9 @@ type LRU_localcache struct {
 	size int64
 	used int64
 
-	linklistTwoWay common.LinklistTwoWay
-	cacheMap     map[string]interface{}
-	lock sync.Mutex
+	linklistTwoWay ttypes.LinklistTwoWay
+	cacheMap       map[string]interface{}
+	lock           sync.Mutex
 }
 
 func (this *LRU_localcache) Start(size int64) {
@@ -22,20 +22,20 @@ func (this *LRU_localcache) Start(size int64) {
 func (this *LRU_localcache) Get(key string) interface{} {
 	this.lock.Lock()
 	defer this.lock.Unlock()
-	res,ok := this.cacheMap[key]
+	res, ok := this.cacheMap[key]
 	if !ok || res == nil {
 		return nil
 	}
-	resValue := res.(*common.LinkNode)
+	resValue := res.(*ttypes.LinkNode)
 	this.linklistTwoWay.MoveNodeToHead(resValue)
 	return resValue.GetValue()
 }
 func (this *LRU_localcache) Set(key string, value interface{}) {
 	this.lock.Lock()
-	res,ok := this.cacheMap[key]
+	res, ok := this.cacheMap[key]
 	this.lock.Unlock()
-	if ok{
-		resValue := res.(*common.LinkNode)
+	if ok {
+		resValue := res.(*ttypes.LinkNode)
 		resValue.TrySetValue(value)
 		this.linklistTwoWay.MoveNodeToHead(resValue)
 		return
@@ -47,7 +47,7 @@ func (this *LRU_localcache) Set(key string, value interface{}) {
 		return
 	}
 	this.used++
-	this.cacheMap[key]=this.linklistTwoWay.SetHead(key, value)
+	this.cacheMap[key] = this.linklistTwoWay.SetHead(key, value)
 }
 func (this LRU_localcache) DumpFile() {
 
@@ -57,16 +57,16 @@ func (this *LRU_localcache) ImportFile(filename string) {
 }
 
 func (this *LRU_localcache) slowSet(key string, value interface{}) {
-	delete(this.cacheMap,this.linklistTwoWay.GetTail().GetKey())
+	delete(this.cacheMap, this.linklistTwoWay.GetTail().GetKey())
 	// del node and set new node
-	newNode := this.linklistTwoWay.DelTailAndSetHead(key,value)
+	newNode := this.linklistTwoWay.DelTailAndSetHead(key, value)
 
 	this.cacheMap[key] = newNode
 }
 
 func (this *LRU_localcache) CacheToMap() map[string]interface{} {
 	res := make(map[string]interface{})
-	for k,v := range this.cacheMap{
+	for k, v := range this.cacheMap {
 		res[k] = v
 	}
 	return res
