@@ -105,7 +105,7 @@ func TestTimeLimitLocalcache_SetWithExpireErr(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := localcache.SetWithExpire(tt.key, tt.wanterr, tt.wait)
-			if err==nil || !strings.Contains(err.Error(), tt.wanterr) {
+			if err == nil || !strings.Contains(err.Error(), tt.wanterr) {
 				t.Errorf("localcache.SetWithExpireErr() = %v, want %v", err.Error(), tt.wanterr)
 			}
 		})
@@ -130,7 +130,7 @@ func TestTimeLimitLocalcache_SetErr(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := localcache.Set(tt.key, tt.wanterr)
-			if err==nil || !strings.Contains(err.Error(), tt.wanterr) {
+			if err == nil || !strings.Contains(err.Error(), tt.wanterr) {
 				t.Errorf("localcache.SetWithExpireErr() = %v, want %v", err.Error(), tt.wanterr)
 			}
 		})
