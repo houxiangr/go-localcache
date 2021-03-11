@@ -17,6 +17,7 @@ type timeLimitValue struct {
 
 type TimeLimitLocalcache struct {
 	size        int64
+	used        int64
 	cacheMap    map[string]timeLimitValue
 	checkSwitch bool
 }
@@ -39,6 +40,9 @@ func (this *TimeLimitLocalcache) Get(key string) interface{} {
 
 func (this *TimeLimitLocalcache) SetWithExpire(key string, value interface{}, expireTime int64) error {
 	this.checkCache()
+	if this.used >= this.size {
+		return fmt.Errorf("local cache is filled")
+	}
 	err := this.Set(key, timeLimitValue{
 		value:      value,
 		expireTime: time.Now().Add(time.Duration(expireTime) * time.Second).Unix(),
@@ -46,6 +50,7 @@ func (this *TimeLimitLocalcache) SetWithExpire(key string, value interface{}, ex
 	if err != nil {
 		return err
 	}
+	this.used++
 	return nil
 }
 
@@ -72,8 +77,9 @@ func (this *TimeLimitLocalcache) checkCache() {
 		return
 	}
 	for k, v := range this.cacheMap {
-		if v.expireTime > time.Now().Unix() {
+		if v.expireTime < time.Now().Unix() {
 			delete(this.cacheMap, k)
+			this.used--
 		}
 	}
 }
