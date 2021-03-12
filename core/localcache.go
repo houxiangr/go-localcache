@@ -1,12 +1,13 @@
 package core
 
 import (
+	"fmt"
 	"github.com/houxiangr/go-localcache/core/lru"
 	"github.com/houxiangr/go-localcache/core/time_limit"
 )
 
 type Localcache interface {
-	Start(size int64)
+	Start(variable map[string]interface{}) error
 	Get(key string) interface{}              //get value
 	Set(key string, value interface{}) error //set value
 	DumpFile()                               //save cache in file
@@ -16,10 +17,10 @@ type Localcache interface {
 
 const (
 	LRU       = "LRU"
-	TimeLimit = "time_limit"
+	TimeLimit = "TL"
 )
 
-func GetLocalcache(outType string, size int64) (Localcache, error) {
+func GetLocalcache(outType string, variable map[string]interface{}) (Localcache, error) {
 	var localcache Localcache
 	switch outType {
 	case LRU:
@@ -27,9 +28,12 @@ func GetLocalcache(outType string, size int64) (Localcache, error) {
 	case TimeLimit:
 		localcache = &time_limit.TimeLimitLocalcache{}
 	default:
-		return nil, nil
+		return nil, fmt.Errorf("not match cache type")
 	}
 
-	localcache.Start(size)
+	err := localcache.Start(variable)
+	if err != nil {
+		return nil, err
+	}
 	return localcache, nil
 }

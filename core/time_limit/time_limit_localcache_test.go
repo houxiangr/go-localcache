@@ -1,8 +1,11 @@
 package time_limit
 
 import (
+	"fmt"
+	"github.com/houxiangr/go-localcache/core/start_variable"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 )
@@ -11,12 +14,18 @@ var localcache TimeLimitLocalcache
 
 func initEmptyTimeLocalcacheCache() {
 	localcache = TimeLimitLocalcache{}
-	localcache.Start(10)
+	localcache.Start(map[string]interface{}{
+		start_variable.CheckTimeKey: 10,
+		start_variable.SizeKey:      10,
+	})
 }
 
 func initFillTimeLocalcacheCache() {
 	localcache = TimeLimitLocalcache{}
-	localcache.Start(10)
+	localcache.Start(map[string]interface{}{
+		start_variable.CheckTimeKey: 10,
+		start_variable.SizeKey:      10,
+	})
 	localcache.SetWithExpire("1", 1, 100)
 	localcache.SetWithExpire("2", 1, 100)
 	localcache.SetWithExpire("3", 1, 100)
@@ -35,13 +44,11 @@ func TestTimeLimitLocalcache_SetAndGet(t *testing.T) {
 	tests := []struct {
 		name      string
 		key       string
-		value     int
 		wantvalue interface{}
 	}{
 		{
 			name:      "set cache and get cache",
 			key:       "1",
-			value:     1,
 			wantvalue: 1,
 		},
 	}
@@ -135,4 +142,21 @@ func TestTimeLimitLocalcache_SetErr(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestMutiGoroutine(t *testing.T) {
+	initEmptyTimeLocalcacheCache()
+	wg := sync.WaitGroup{}
+	wg.Add(1000)
+	for i := 0; i < 1000; i++ {
+		go func(index int) {
+			defer wg.Done()
+			localcache.SetWithExpire(fmt.Sprintf("muti_%d", index), fmt.Sprintf("muti_%d", index), 1)
+			got := localcache.Get(fmt.Sprintf("muti_%d", index))
+			if got != nil && got != fmt.Sprintf("muti_%d", index) {
+				t.Errorf("got = %+v,want = %s", got, fmt.Sprintf("muti_%d", index))
+			}
+		}(i)
+	}
+	wg.Wait()
 }

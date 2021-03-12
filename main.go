@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/houxiangr/go-localcache/core"
+	"github.com/houxiangr/go-localcache/core/start_variable"
 )
 
 func main() {
-	localcache, _ := core.GetLocalcache(core.LRU, 2)
+	localcache, _ := core.GetLocalcache(core.LRU, map[string]interface{}{
+		start_variable.SizeKey:10,
+	})
 
 	localcache.Set("1", "1")
 	localcache.Set("2", "2")

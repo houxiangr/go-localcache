@@ -1,23 +1,30 @@
 package lru
 
 import (
+	"fmt"
 	"github.com/houxiangr/go-localcache/core/lru/ttypes"
+	"github.com/houxiangr/go-localcache/core/start_variable"
 	"sync"
 )
 
 type LRULocalcache struct {
-	size int64
-	used int64
+	size int
+	used int
 
 	linklistTwoWay ttypes.LinklistTwoWay
 	cacheMap       map[string]interface{}
 	lock           sync.Mutex
 }
 
-func (this *LRULocalcache) Start(size int64) {
+func (this *LRULocalcache) Start(variable map[string]interface{}) error {
 	this.cacheMap = make(map[string]interface{})
 	this.lock = sync.Mutex{}
-	this.size = size
+	var ok bool
+	this.size, ok = variable[start_variable.SizeKey].(int)
+	if !ok {
+		return fmt.Errorf("start variable transfer fail")
+	}
+	return nil
 }
 func (this *LRULocalcache) Get(key string) interface{} {
 	this.lock.Lock()
@@ -50,9 +57,10 @@ func (this *LRULocalcache) Set(key string, value interface{}) error {
 	this.cacheMap[key] = this.linklistTwoWay.SetHead(key, value)
 	return nil
 }
-func (this LRULocalcache) DumpFile() {
 
+func (this LRULocalcache) DumpFile() {
 }
+
 func (this *LRULocalcache) ImportFile(filename string) {
 
 }
