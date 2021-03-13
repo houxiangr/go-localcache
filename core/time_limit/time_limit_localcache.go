@@ -3,6 +3,7 @@ package time_limit
 import (
 	"fmt"
 	"github.com/houxiangr/go-localcache/core/start_variable"
+	"github.com/houxiangr/go-localcache/core/time_limit/ttypes"
 	"reflect"
 	"sync"
 	"time"
@@ -12,21 +13,17 @@ const (
 	TimeLimitValueType = "time_limit.timeLimitValue"
 )
 
-type timeLimitValue struct {
-	value      interface{}
-	expireTime int64
-}
-
 type TimeLimitLocalcache struct {
 	size        int
 	used        int
-	cacheMap    map[string]timeLimitValue
+	cacheMap    map[string]ttypes.TimeLimitValue
 	lock        sync.RWMutex
+	//todo 增加正在清理缓存状态
 	checkSwitch bool
 }
 
 func (this *TimeLimitLocalcache) Start(variable map[string]interface{}) error {
-	this.cacheMap = make(map[string]timeLimitValue)
+	this.cacheMap = make(map[string]ttypes.TimeLimitValue)
 	var ok bool
 	this.size, ok = variable[start_variable.SizeKey].(int)
 	if !ok {
@@ -49,7 +46,7 @@ func (this *TimeLimitLocalcache) Start(variable map[string]interface{}) error {
 func (this *TimeLimitLocalcache) Get(key string) interface{} {
 	this.checkCache()
 	this.lock.RLock()
-	value := this.cacheMap[key].value
+	value := this.cacheMap[key].Value
 	this.lock.RUnlock()
 	return value
 }
@@ -59,9 +56,9 @@ func (this *TimeLimitLocalcache) SetWithExpire(key string, value interface{}, ex
 	if this.used >= this.size {
 		return fmt.Errorf("local cache is filled")
 	}
-	err := this.Set(key, timeLimitValue{
-		value:      value,
-		expireTime: time.Now().Add(time.Duration(expireTime) * time.Second).Unix(),
+	err := this.Set(key, ttypes.TimeLimitValue{
+		Value:      value,
+		ExpireTime: time.Now().Add(time.Duration(expireTime) * time.Second).Unix(),
 	})
 	if err != nil {
 		return err
@@ -75,7 +72,7 @@ func (this *TimeLimitLocalcache) Set(key string, value interface{}) error {
 		return fmt.Errorf("time limit local cache set value type err")
 	}
 	this.lock.Lock()
-	this.cacheMap[key] = value.(timeLimitValue)
+	this.cacheMap[key] = value.(ttypes.TimeLimitValue)
 	this.lock.Unlock()
 	return nil
 }
@@ -92,21 +89,23 @@ func (this *TimeLimitLocalcache) CacheToMap() map[string]interface{} {
 	res := make(map[string]interface{})
 	for k, v := range this.cacheMap {
 		res[k] = map[string]interface{}{
-			"value":       v.value,
-			"expire_time": v.expireTime,
+			"value":       v.Value,
+			"expire_time": v.ExpireTime,
 		}
 	}
 	return res
 }
 
+//todo 限制一次性淘汰体量优化
 func (this *TimeLimitLocalcache) checkCache() {
 	if !this.checkSwitch {
 		return
 	}
 	this.lock.Lock()
 	defer this.lock.Unlock()
+	//todo 优化淘汰顺序-堆
 	for k, v := range this.cacheMap {
-		if v.expireTime < time.Now().Unix() {
+		if v.ExpireTime < time.Now().Unix() {
 			delete(this.cacheMap, k)
 			this.used--
 		}

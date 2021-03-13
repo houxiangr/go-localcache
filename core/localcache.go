@@ -6,6 +6,8 @@ import (
 	"github.com/houxiangr/go-localcache/core/time_limit"
 )
 
+//todo 针对缓存穿透做优化
+//todo 进行map分区，减少锁粒度
 type Localcache interface {
 	Start(variable map[string]interface{}) error
 	Get(key string) interface{}              //get value
