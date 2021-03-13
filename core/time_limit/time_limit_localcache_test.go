@@ -54,7 +54,10 @@ func TestTimeLimitLocalcache_SetAndGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			localcache.SetWithExpire(tt.key, tt.wantvalue, 60)
+			err := localcache.SetWithExpire(tt.key, tt.wantvalue, 60)
+			if err != nil {
+				t.Error(err)
+			}
 			got := localcache.Get(tt.key)
 			if !reflect.DeepEqual(got, tt.wantvalue) {
 				t.Errorf("localcache.Get() = %v, want %v", got, tt.wantvalue)

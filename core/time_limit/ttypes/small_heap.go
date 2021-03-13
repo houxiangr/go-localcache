@@ -43,11 +43,11 @@ func (this *SmallHeap) Sink(n int) {
 	for {
 		left := getLeft(n)
 		right := getRight(n)
-		minNode:= this.getMinNode(left, right)
+		minNode := this.getMinNode(left, right)
 		if this.heapSlice[n].ExpireTime > this.heapSlice[minNode].ExpireTime {
 			this.heapSlice[minNode], this.heapSlice[n] = this.heapSlice[n], this.heapSlice[minNode]
 			n = minNode
-		}else{
+		} else {
 			break
 		}
 
@@ -57,9 +57,9 @@ func (this *SmallHeap) Sink(n int) {
 	}
 }
 
-func (this *SmallHeap) DelRoot(){
+func (this *SmallHeap) DelRoot() {
 	size := len(this.heapSlice)
-	this.heapSlice[0],this.heapSlice[size-1] = this.heapSlice[size-1],this.heapSlice[0]
+	this.heapSlice[0], this.heapSlice[size-1] = this.heapSlice[size-1], this.heapSlice[0]
 	this.heapSlice = this.heapSlice[:size-1]
 	this.Sink(0)
 }
@@ -76,7 +76,7 @@ func getParent(n int) int {
 	return n / 2
 }
 
-func (this *SmallHeap)getMinNode(left, right int)int {
+func (this *SmallHeap) getMinNode(left, right int) int {
 	size := len(this.heapSlice)
 	var leftNode *TimeLimitValue
 	var rightNode *TimeLimitValue

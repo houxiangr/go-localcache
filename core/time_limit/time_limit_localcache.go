@@ -10,14 +10,14 @@ import (
 )
 
 const (
-	TimeLimitValueType = "time_limit.timeLimitValue"
+	TimeLimitValueType = "ttypes.TimeLimitValue"
 )
 
 type TimeLimitLocalcache struct {
-	size        int
-	used        int
-	cacheMap    map[string]ttypes.TimeLimitValue
-	lock        sync.RWMutex
+	size     int
+	used     int
+	cacheMap map[string]ttypes.TimeLimitValue
+	lock     sync.RWMutex
 	//todo 增加正在清理缓存状态
 	checkSwitch bool
 }

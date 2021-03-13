@@ -10,55 +10,54 @@ var smallHeap SmallHeap
 func initSmallHeap() {
 	smallHeap = SmallHeap{}
 	smallHeap.Push(&TimeLimitValue{
-		Value:6,
-		ExpireTime:6,
+		Value:      6,
+		ExpireTime: 6,
 	})
 	smallHeap.Push(&TimeLimitValue{
-		Value:1,
-		ExpireTime:1,
+		Value:      1,
+		ExpireTime: 1,
 	})
 	smallHeap.Push(&TimeLimitValue{
-		Value:3,
-		ExpireTime:3,
+		Value:      3,
+		ExpireTime: 3,
 	})
 	smallHeap.Push(&TimeLimitValue{
-		Value:5,
-		ExpireTime:5,
+		Value:      5,
+		ExpireTime: 5,
 	})
 	smallHeap.Push(&TimeLimitValue{
-		Value:2,
-		ExpireTime:2,
+		Value:      2,
+		ExpireTime: 2,
 	})
 	smallHeap.Push(&TimeLimitValue{
-		Value:4,
-		ExpireTime:4,
+		Value:      4,
+		ExpireTime: 4,
 	})
-
 
 }
 
 func TestSmallHeap_Push(t *testing.T) {
 	initSmallHeap()
 	tests := []struct {
-		name     string
+		name      string
 		pushvalue *TimeLimitValue
-		want int
+		want      int
 	}{
 		{
-			name:     "push first value",
+			name: "push first value",
 			pushvalue: &TimeLimitValue{
-				Value:1,
-				ExpireTime:1,
+				Value:      1,
+				ExpireTime: 1,
 			},
-			want:7,
+			want: 7,
 		},
 		{
-			name:     "push second value",
+			name: "push second value",
 			pushvalue: &TimeLimitValue{
-				Value:2,
-				ExpireTime:2,
+				Value:      2,
+				ExpireTime: 2,
 			},
-			want:8,
+			want: 8,
 		},
 	}
 	for _, tt := range tests {
@@ -74,35 +73,35 @@ func TestSmallHeap_Push(t *testing.T) {
 func TestSmallHeap_Adjust(t *testing.T) {
 	initSmallHeap()
 	tests := []struct {
-		name     string
+		name string
 		want []*TimeLimitValue
 	}{
 		{
-			name:     "adjust small heap",
-			want:[]*TimeLimitValue{
+			name: "adjust small heap",
+			want: []*TimeLimitValue{
 				&TimeLimitValue{
-					Value:1,
-					ExpireTime:1,
+					Value:      1,
+					ExpireTime: 1,
 				},
 				&TimeLimitValue{
-					Value:2,
-					ExpireTime:2,
+					Value:      2,
+					ExpireTime: 2,
 				},
 				&TimeLimitValue{
-					Value:3,
-					ExpireTime:3,
+					Value:      3,
+					ExpireTime: 3,
 				},
 				&TimeLimitValue{
-					Value:5,
-					ExpireTime:5,
+					Value:      5,
+					ExpireTime: 5,
 				},
 				&TimeLimitValue{
-					Value:6,
-					ExpireTime:6,
+					Value:      6,
+					ExpireTime: 6,
 				},
 				&TimeLimitValue{
-					Value:4,
-					ExpireTime:4,
+					Value:      4,
+					ExpireTime: 4,
 				},
 			},
 		},
@@ -120,37 +119,37 @@ func TestSmallHeap_Adjust(t *testing.T) {
 func TestSmallHeap_Rise(t *testing.T) {
 	initSmallHeap()
 	tests := []struct {
-		name     string
+		name string
 		rise int
 		want []*TimeLimitValue
 	}{
 		{
-			name:     "rise elem",
-			rise:1,
-			want:[]*TimeLimitValue{
+			name: "rise elem",
+			rise: 1,
+			want: []*TimeLimitValue{
 				&TimeLimitValue{
-					Value:1,
-					ExpireTime:1,
+					Value:      1,
+					ExpireTime: 1,
 				},
 				&TimeLimitValue{
-					Value:6,
-					ExpireTime:6,
+					Value:      6,
+					ExpireTime: 6,
 				},
 				&TimeLimitValue{
-					Value:3,
-					ExpireTime:3,
+					Value:      3,
+					ExpireTime: 3,
 				},
 				&TimeLimitValue{
-					Value:5,
-					ExpireTime:5,
+					Value:      5,
+					ExpireTime: 5,
 				},
 				&TimeLimitValue{
-					Value:2,
-					ExpireTime:2,
+					Value:      2,
+					ExpireTime: 2,
 				},
 				&TimeLimitValue{
-					Value:4,
-					ExpireTime:4,
+					Value:      4,
+					ExpireTime: 4,
 				},
 			},
 		},
@@ -168,37 +167,37 @@ func TestSmallHeap_Rise(t *testing.T) {
 func TestSmallHeap_Sink(t *testing.T) {
 	initSmallHeap()
 	tests := []struct {
-		name     string
+		name string
 		sink int
 		want []*TimeLimitValue
 	}{
 		{
-			name:     "sink elem",
-			sink:0,
-			want:[]*TimeLimitValue{
+			name: "sink elem",
+			sink: 0,
+			want: []*TimeLimitValue{
 				&TimeLimitValue{
-					Value:1,
-					ExpireTime:1,
+					Value:      1,
+					ExpireTime: 1,
 				},
 				&TimeLimitValue{
-					Value:2,
-					ExpireTime:2,
+					Value:      2,
+					ExpireTime: 2,
 				},
 				&TimeLimitValue{
-					Value:3,
-					ExpireTime:3,
+					Value:      3,
+					ExpireTime: 3,
 				},
 				&TimeLimitValue{
-					Value:5,
-					ExpireTime:5,
+					Value:      5,
+					ExpireTime: 5,
 				},
 				&TimeLimitValue{
-					Value:6,
-					ExpireTime:6,
+					Value:      6,
+					ExpireTime: 6,
 				},
 				&TimeLimitValue{
-					Value:4,
-					ExpireTime:4,
+					Value:      4,
+					ExpireTime: 4,
 				},
 			},
 		},
@@ -213,37 +212,35 @@ func TestSmallHeap_Sink(t *testing.T) {
 	}
 }
 
-
 func TestSmallHeap_DelRoot(t *testing.T) {
 	initSmallHeap()
 	tests := []struct {
-		name     string
+		name string
 		want []*TimeLimitValue
 	}{
 		{
-			name:     "del root",
-			want:[]*TimeLimitValue{
+			name: "del root",
+			want: []*TimeLimitValue{
 				&TimeLimitValue{
-					Value:2,
-					ExpireTime:2,
+					Value:      2,
+					ExpireTime: 2,
 				},
 				&TimeLimitValue{
-					Value:4,
-					ExpireTime:4,
+					Value:      4,
+					ExpireTime: 4,
 				},
 				&TimeLimitValue{
-					Value:3,
-					ExpireTime:3,
+					Value:      3,
+					ExpireTime: 3,
 				},
 				&TimeLimitValue{
-					Value:5,
-					ExpireTime:5,
+					Value:      5,
+					ExpireTime: 5,
 				},
 				&TimeLimitValue{
-					Value:6,
-					ExpireTime:6,
+					Value:      6,
+					ExpireTime: 6,
 				},
-
 			},
 		},
 	}
