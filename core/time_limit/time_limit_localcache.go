@@ -2,7 +2,7 @@ package time_limit
 
 import (
 	"fmt"
-	"github.com/houxiangr/go-localcache/core/start_variable"
+	"github.com/houxiangr/go-localcache/core/time_limit/start_variable"
 	"github.com/houxiangr/go-localcache/core/time_limit/ttypes"
 	"reflect"
 	"sync"
@@ -13,14 +13,34 @@ const (
 	TimeLimitValueType = "ttypes.TimeLimitValue"
 )
 
+/*    ___________________________________________________
+     | 													|
+     v                                                  |
+CanCheckCache ----> CheckingCache ------> CheckCacheCycleTime
+*/
+const (
+	CanCheckCache       = 1 //可以检查淘汰内存
+	CheckingCache       = 2 //正在检查内存所以不能检查内容
+	CheckCacheCycleTime = 3 //由于在检查内存的间隔周期内不能检查内存
+)
+
+const (
+	DefaultCheckTime          = 10
+	DefaultCheckCount         = 100
+	DefaultCheckCountInterval = 3
+)
+
 type TimeLimitLocalcache struct {
 	size      int
 	used      int
 	cacheMap  map[string]ttypes.TimeLimitValue
 	smallHeap ttypes.SmallHeap
 	lock      sync.RWMutex
-	//todo 增加正在清理缓存状态
-	checkSwitch bool
+	//增加正在清理缓存状态
+	checkSwitch        int8
+	checkTime          int
+	checkCount         int
+	checkCountInterval int
 }
 
 func (this *TimeLimitLocalcache) Start(variable map[string]interface{}) error {
@@ -31,16 +51,31 @@ func (this *TimeLimitLocalcache) Start(variable map[string]interface{}) error {
 	if !ok {
 		return fmt.Errorf("start variable transfer fail")
 	}
-	checkTime, ok := variable[start_variable.CheckTimeKey].(int)
+	this.checkTime, ok = variable[start_variable.CheckTimeKey].(int)
 	if !ok {
-		return fmt.Errorf("start variable transfer fail")
+		this.checkTime = DefaultCheckTime
 	}
-	this.checkSwitch = false
+	this.checkCount, ok = variable[start_variable.CheckCount].(int)
+	if !ok {
+		this.checkCount = DefaultCheckCount
+	}
+	this.checkCountInterval, ok = variable[start_variable.CheckCountInterval].(int)
+	if !ok {
+		this.checkCount = DefaultCheckCountInterval
+	}
+
+	this.checkSwitch = CheckCacheCycleTime
 	this.lock = sync.RWMutex{}
 	go func() {
 		for {
-			this.checkSwitch = !this.checkSwitch
-			time.Sleep(time.Second * time.Duration(checkTime))
+			time.Sleep(time.Second * time.Duration(this.checkTime))
+			if this.checkSwitch == CheckingCache {
+				time.Sleep(time.Second * time.Duration(this.checkTime))
+			}
+
+			if this.checkSwitch == CheckCacheCycleTime {
+				this.checkSwitch = CanCheckCache
+			}
 		}
 	}()
 	return nil
@@ -102,14 +137,15 @@ func (this *TimeLimitLocalcache) CacheToMap() map[string]interface{} {
 	return res
 }
 
-//todo 限制一次性淘汰体量优化
 func (this *TimeLimitLocalcache) checkCache() {
-	if !this.checkSwitch {
+	if this.checkSwitch != CanCheckCache {
 		return
 	}
+	this.checkSwitch = CheckingCache
 	currentTime := time.Now().Unix()
 	this.lock.Lock()
 	defer this.lock.Unlock()
+	count := 0
 	//优化淘汰顺序-堆
 	this.smallHeap.Adjust()
 	for {
@@ -123,5 +159,12 @@ func (this *TimeLimitLocalcache) checkCache() {
 		delete(this.cacheMap, smallHeapRoot.Key)
 		this.smallHeap.DelRoot()
 		this.used--
+		count++
+		//限制一次性淘汰体量优化
+		if count >= this.checkCount {
+			count = 0
+			time.Sleep(time.Duration(this.checkCountInterval) * time.Second)
+		}
 	}
+	this.checkSwitch = CheckCacheCycleTime
 }

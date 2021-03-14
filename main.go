@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/houxiangr/go-localcache/core"
-	"github.com/houxiangr/go-localcache/core/start_variable"
+	"github.com/houxiangr/go-localcache/core/lru/start_variable"
 )
 
 func main() {

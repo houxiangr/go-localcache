@@ -1,5 +1,7 @@
 package ttypes
 
+import "fmt"
+
 type SmallHeap struct {
 	heapSlice []*TimeLimitValue
 }
@@ -18,6 +20,7 @@ func (this *SmallHeap) Adjust() {
 
 		if this.heapSlice[minNode].ExpireTime < this.heapSlice[i].ExpireTime {
 			this.heapSlice[minNode], this.heapSlice[i] = this.heapSlice[i], this.heapSlice[minNode]
+			this.Rise(i)
 		}
 	}
 }
@@ -76,6 +79,12 @@ func (this *SmallHeap) GetRoot() *TimeLimitValue {
 		return nil
 	}
 	return this.heapSlice[0]
+}
+
+func (this *SmallHeap) PrintHeap() {
+	for _, v := range this.heapSlice {
+		fmt.Println(v.Key, v.ExpireTime)
+	}
 }
 
 func getLeft(n int) int {

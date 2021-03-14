@@ -2,7 +2,7 @@ package lru
 
 import (
 	"fmt"
-	"github.com/houxiangr/go-localcache/core/start_variable"
+	"github.com/houxiangr/go-localcache/core/lru/start_variable"
 	"reflect"
 	"sync"
 	"testing"
