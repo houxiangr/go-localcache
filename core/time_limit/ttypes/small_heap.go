@@ -40,7 +40,7 @@ func (this *SmallHeap) Rise(n int) {
 
 func (this *SmallHeap) Sink(n int) {
 	size := len(this.heapSlice)
-	if size == 0{
+	if size == 0 {
 		return
 	}
 	for {
