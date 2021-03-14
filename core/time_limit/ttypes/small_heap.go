@@ -40,6 +40,9 @@ func (this *SmallHeap) Rise(n int) {
 
 func (this *SmallHeap) Sink(n int) {
 	size := len(this.heapSlice)
+	if size == 0{
+		return
+	}
 	for {
 		left := getLeft(n)
 		right := getRight(n)
@@ -61,7 +64,18 @@ func (this *SmallHeap) DelRoot() {
 	size := len(this.heapSlice)
 	this.heapSlice[0], this.heapSlice[size-1] = this.heapSlice[size-1], this.heapSlice[0]
 	this.heapSlice = this.heapSlice[:size-1]
+	//本来只有一个元素，删除后就空了
+	if size == 1 {
+		return
+	}
 	this.Sink(0)
+}
+
+func (this *SmallHeap) GetRoot() *TimeLimitValue {
+	if len(this.heapSlice) == 0 {
+		return nil
+	}
+	return this.heapSlice[0]
 }
 
 func getLeft(n int) int {

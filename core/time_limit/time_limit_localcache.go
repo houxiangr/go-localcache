@@ -14,16 +14,18 @@ const (
 )
 
 type TimeLimitLocalcache struct {
-	size     int
-	used     int
-	cacheMap map[string]ttypes.TimeLimitValue
-	lock     sync.RWMutex
+	size      int
+	used      int
+	cacheMap  map[string]ttypes.TimeLimitValue
+	smallHeap ttypes.SmallHeap
+	lock      sync.RWMutex
 	//todo 增加正在清理缓存状态
 	checkSwitch bool
 }
 
 func (this *TimeLimitLocalcache) Start(variable map[string]interface{}) error {
 	this.cacheMap = make(map[string]ttypes.TimeLimitValue)
+	this.smallHeap = ttypes.SmallHeap{}
 	var ok bool
 	this.size, ok = variable[start_variable.SizeKey].(int)
 	if !ok {
@@ -57,6 +59,7 @@ func (this *TimeLimitLocalcache) SetWithExpire(key string, value interface{}, ex
 		return fmt.Errorf("local cache is filled")
 	}
 	err := this.Set(key, ttypes.TimeLimitValue{
+		Key:        key,
 		Value:      value,
 		ExpireTime: time.Now().Add(time.Duration(expireTime) * time.Second).Unix(),
 	})
@@ -71,8 +74,10 @@ func (this *TimeLimitLocalcache) Set(key string, value interface{}) error {
 	if reflect.TypeOf(value).String() != TimeLimitValueType {
 		return fmt.Errorf("time limit local cache set value type err")
 	}
+	timeLimitValue := value.(ttypes.TimeLimitValue)
 	this.lock.Lock()
-	this.cacheMap[key] = value.(ttypes.TimeLimitValue)
+	this.cacheMap[key] = timeLimitValue
+	this.smallHeap.Push(&timeLimitValue)
 	this.lock.Unlock()
 	return nil
 }
@@ -89,6 +94,7 @@ func (this *TimeLimitLocalcache) CacheToMap() map[string]interface{} {
 	res := make(map[string]interface{})
 	for k, v := range this.cacheMap {
 		res[k] = map[string]interface{}{
+			"key":         v.Key,
 			"value":       v.Value,
 			"expire_time": v.ExpireTime,
 		}
@@ -101,13 +107,21 @@ func (this *TimeLimitLocalcache) checkCache() {
 	if !this.checkSwitch {
 		return
 	}
+	currentTime := time.Now().Unix()
 	this.lock.Lock()
 	defer this.lock.Unlock()
-	//todo 优化淘汰顺序-堆
-	for k, v := range this.cacheMap {
-		if v.ExpireTime < time.Now().Unix() {
-			delete(this.cacheMap, k)
-			this.used--
+	//优化淘汰顺序-堆
+	this.smallHeap.Adjust()
+	for {
+		smallHeapRoot := this.smallHeap.GetRoot()
+		if smallHeapRoot == nil {
+			break
 		}
+		if smallHeapRoot.ExpireTime > currentTime {
+			break
+		}
+		delete(this.cacheMap, smallHeapRoot.Key)
+		this.smallHeap.DelRoot()
+		this.used--
 	}
 }
