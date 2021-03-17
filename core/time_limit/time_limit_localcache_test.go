@@ -2,7 +2,6 @@ package time_limit
 
 import (
 	"fmt"
-	"github.com/houxiangr/go-localcache/core/time_limit/start_variable"
 	"reflect"
 	"strings"
 	"sync"
@@ -15,8 +14,8 @@ var localcache TimeLimitLocalcache
 func initEmptyTimeLocalcacheCache() {
 	localcache = TimeLimitLocalcache{}
 	localcache.Start(map[string]interface{}{
-		start_variable.CheckTimeKey: 10,
-		start_variable.SizeKey:      10,
+		CheckTimeKey: 10,
+		SizeKey:      10,
 	})
 }
 

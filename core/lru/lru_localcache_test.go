@@ -2,7 +2,6 @@ package lru
 
 import (
 	"fmt"
-	"github.com/houxiangr/go-localcache/core/lru/start_variable"
 	"reflect"
 	"sync"
 	"testing"
@@ -13,7 +12,7 @@ var localcache LRULocalcache
 func initEmptyLRUCache() {
 	localcache = LRULocalcache{}
 	localcache.Start((map[string]interface{}{
-		start_variable.SizeKey: 10,
+		SizeKey: 10,
 	}))
 }
 

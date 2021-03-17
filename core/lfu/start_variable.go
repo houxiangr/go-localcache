@@ -2,6 +2,5 @@ package lfu
 
 //start variable const key
 const (
-	SizeKey      = "size"
+	SizeKey = "size"
 )
-
