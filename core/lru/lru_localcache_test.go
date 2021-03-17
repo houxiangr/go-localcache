@@ -43,7 +43,7 @@ func TestLRU_localcache_Get_And_Set(t *testing.T) {
 func initFillLruCache() {
 	localcache = LRULocalcache{}
 	localcache.Start((map[string]interface{}{
-		start_variable.SizeKey: 10,
+		SizeKey: 10,
 	}))
 	localcache.Set("1", 1)
 	localcache.Set("2", 2)

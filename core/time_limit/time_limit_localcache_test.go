@@ -22,8 +22,8 @@ func initEmptyTimeLocalcacheCache() {
 func initFillTimeLocalcacheCache() {
 	localcache = TimeLimitLocalcache{}
 	localcache.Start(map[string]interface{}{
-		start_variable.CheckTimeKey: 10,
-		start_variable.SizeKey:      10,
+		CheckTimeKey: 10,
+		SizeKey:      10,
 	})
 	localcache.SetWithExpire("1", 1, 100)
 	localcache.SetWithExpire("2", 1, 100)
@@ -40,10 +40,10 @@ func initFillTimeLocalcacheCache() {
 func initChcekCountTimeLocalcacheCache() {
 	localcache = TimeLimitLocalcache{}
 	localcache.Start(map[string]interface{}{
-		start_variable.CheckTimeKey:       1,
-		start_variable.SizeKey:            10,
-		start_variable.CheckCount:         1,
-		start_variable.CheckCountInterval: 1,
+		CheckTimeKey:       1,
+		SizeKey:            10,
+		CheckCount:         1,
+		CheckCountInterval: 1,
 	})
 	localcache.SetWithExpire("1", 1, 100)
 	localcache.SetWithExpire("2", 1, 100)

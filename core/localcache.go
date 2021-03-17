@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/houxiangr/go-localcache/core/lfu"
 	"github.com/houxiangr/go-localcache/core/lru"
 	"github.com/houxiangr/go-localcache/core/time_limit"
 )
@@ -30,6 +31,8 @@ func GetLocalcache(outType string, variable map[string]interface{}) (Localcache,
 		localcache = &lru.LRULocalcache{}
 	case TimeLimit:
 		localcache = &time_limit.TimeLimitLocalcache{}
+	case LFU:
+		localcache = &lfu.LFULocalCache{}
 	default:
 		return nil, fmt.Errorf("not match cache type")
 	}
