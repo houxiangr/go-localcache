@@ -2,7 +2,6 @@ package lru
 
 import (
 	"fmt"
-	"github.com/houxiangr/go-localcache/core/lru/start_variable"
 	"github.com/houxiangr/go-localcache/core/lru/ttypes"
 	"sync"
 )
@@ -20,7 +19,7 @@ func (this *LRULocalcache) Start(variable map[string]interface{}) error {
 	this.cacheMap = make(map[string]interface{})
 	this.lock = sync.Mutex{}
 	var ok bool
-	this.size, ok = variable[start_variable.SizeKey].(int)
+	this.size, ok = variable[SizeKey].(int)
 	if !ok {
 		return fmt.Errorf("start variable transfer fail")
 	}

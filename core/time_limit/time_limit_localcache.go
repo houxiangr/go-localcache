@@ -2,7 +2,6 @@ package time_limit
 
 import (
 	"fmt"
-	"github.com/houxiangr/go-localcache/core/time_limit/start_variable"
 	"github.com/houxiangr/go-localcache/core/time_limit/ttypes"
 	"reflect"
 	"sync"
@@ -47,19 +46,19 @@ func (this *TimeLimitLocalcache) Start(variable map[string]interface{}) error {
 	this.cacheMap = make(map[string]ttypes.TimeLimitValue)
 	this.smallHeap = ttypes.SmallHeap{}
 	var ok bool
-	this.size, ok = variable[start_variable.SizeKey].(int)
+	this.size, ok = variable[SizeKey].(int)
 	if !ok {
 		return fmt.Errorf("start variable transfer fail")
 	}
-	this.checkTime, ok = variable[start_variable.CheckTimeKey].(int)
+	this.checkTime, ok = variable[CheckTimeKey].(int)
 	if !ok {
 		this.checkTime = DefaultCheckTime
 	}
-	this.checkCount, ok = variable[start_variable.CheckCount].(int)
+	this.checkCount, ok = variable[CheckCount].(int)
 	if !ok {
 		this.checkCount = DefaultCheckCount
 	}
-	this.checkCountInterval, ok = variable[start_variable.CheckCountInterval].(int)
+	this.checkCountInterval, ok = variable[CheckCountInterval].(int)
 	if !ok {
 		this.checkCount = DefaultCheckCountInterval
 	}

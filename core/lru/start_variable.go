@@ -1,4 +1,4 @@
-package start_variable
+package lru
 
 //start variable const key
 const (

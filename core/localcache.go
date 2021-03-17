@@ -20,6 +20,7 @@ type Localcache interface {
 const (
 	LRU       = "LRU"
 	TimeLimit = "TL"
+	LFU       = "LFU"
 )
 
 func GetLocalcache(outType string, variable map[string]interface{}) (Localcache, error) {

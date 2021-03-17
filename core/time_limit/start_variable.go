@@ -1,4 +1,4 @@
-package start_variable
+package time_limit
 
 //start variable const key
 const (
