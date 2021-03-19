@@ -9,14 +9,15 @@ import (
 type LFULocalCache struct {
 	size      int
 	cacheMap  map[string]ttypes.LFUValue
-	freqFloor map[string]ttypes.FreqFloor
+	freqFloor map[int]ttypes.LinkedMap
+	minFloor  int
 
 	lock sync.Mutex
 }
 
 func (this *LFULocalCache) Start(variable map[string]interface{}) error {
 	this.cacheMap = make(map[string]ttypes.LFUValue)
-	this.freqFloor = make(map[string]ttypes.FreqFloor)
+	this.freqFloor = make(map[int]ttypes.LinkedMap)
 	this.lock = sync.Mutex{}
 	var ok bool
 	this.size, ok = variable[SizeKey].(int)
@@ -27,8 +28,10 @@ func (this *LFULocalCache) Start(variable map[string]interface{}) error {
 }
 
 func (this *LFULocalCache) Get(key string) interface{} {
+	lfuValue := this.cacheMap[key]
 
-	return nil
+
+	return lfuValue.Value
 }
 
 func (this *LFULocalCache) Set(key string, value interface{}) error {

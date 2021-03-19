@@ -1,6 +1,6 @@
 package ttypes
 
 type LFUValue struct {
-	value interface{}
-	freq  int
+	Value interface{}
+	Freq  int
 }
