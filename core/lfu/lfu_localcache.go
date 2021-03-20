@@ -49,12 +49,12 @@ func (this *LFULocalCache) Set(key string, value interface{}) error {
 	if len(this.cacheMap) >= this.size {
 		targetKey := this.freqFloor[this.minFloor].GetHead().GetKey()
 		this.freqFloor[this.minFloor].DelHead()
-		delete(this.cacheMap,targetKey)
+		delete(this.cacheMap, targetKey)
 	}
 
 	lfuValue := ttypes.LFUValue{
 		Value: value,
-		Freq:1,
+		Freq:  1,
 	}
 
 	this.cacheMap[key] = &lfuValue
@@ -80,10 +80,10 @@ func (this *LFULocalCache) ImportFile(filename string) {
 
 func (this *LFULocalCache) CacheToMap() map[string]interface{} {
 	res := make(map[string]interface{})
-	for k,_ := range this.cacheMap {
+	for k, _ := range this.cacheMap {
 		res[k] = map[string]interface{}{
-			"value":this.cacheMap[k].Value,
-			"freq":this.cacheMap[k].Freq,
+			"value": this.cacheMap[k].Value,
+			"freq":  this.cacheMap[k].Freq,
 		}
 	}
 	return res

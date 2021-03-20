@@ -52,7 +52,7 @@ func (this *LinkedMap) DelHead() {
 	this.head = headnext
 }
 
-func (this *LinkedMap) DelKey(key string){
+func (this *LinkedMap) DelKey(key string) {
 
 	node := this.nodeMap[key]
 
@@ -65,9 +65,9 @@ func (this *LinkedMap) DelKey(key string){
 		this.tail = nil
 	} else if node == this.head {
 		this.head = this.head.nextNode
-	}else if node == this.tail {
+	} else if node == this.tail {
 		this.tail = this.tail.preNode
-	}else{
+	} else {
 		node.preNode.nextNode = node.nextNode
 		node.nextNode.preNode = node.preNode
 	}
@@ -80,15 +80,15 @@ func (this *LinkedMap) Len() int {
 	return len(this.nodeMap)
 }
 
-func (this *LinkedMap) GetHead()*LinkedNode {
+func (this *LinkedMap) GetHead() *LinkedNode {
 	return this.head
 }
 
-func (this LinkedNode) GetKey()string{
+func (this LinkedNode) GetKey() string {
 	return this.key
 }
 
-func (this LinkedMap) Range(){
+func (this LinkedMap) Range() {
 	start := this.head
 	for start != nil {
 		fmt.Println(start.key)
