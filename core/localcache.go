@@ -32,7 +32,7 @@ func GetLocalcache(outType string, variable map[string]interface{}) (Localcache,
 	case TimeLimit:
 		localcache = &time_limit.TimeLimitLocalcache{}
 	case LFU:
-		localcache = &lfu.LFULocalCache{}
+		localcache = &lfu.LFULocalcache{}
 	default:
 		return nil, fmt.Errorf("not match cache type")
 	}

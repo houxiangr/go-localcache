@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type LFULocalCache struct {
+type LFULocalcache struct {
 	size      int
 	cacheMap  map[string]*ttypes.LFUValue
 	freqFloor map[int]*ttypes.LinkedMap
@@ -15,7 +15,7 @@ type LFULocalCache struct {
 	sync.Mutex
 }
 
-func (this *LFULocalCache) Start(variable map[string]interface{}) error {
+func (this *LFULocalcache) Start(variable map[string]interface{}) error {
 	this.cacheMap = make(map[string]*ttypes.LFUValue)
 	this.freqFloor = make(map[int]*ttypes.LinkedMap)
 	var ok bool
@@ -26,10 +26,13 @@ func (this *LFULocalCache) Start(variable map[string]interface{}) error {
 	return nil
 }
 
-func (this *LFULocalCache) Get(key string) interface{} {
+func (this *LFULocalcache) Get(key string) interface{} {
 	this.Lock()
 	defer this.Unlock()
-	lfuValue := this.cacheMap[key]
+	lfuValue, ok := this.cacheMap[key]
+	if !ok {
+		return nil
+	}
 
 	this.freqFloor[lfuValue.Freq].DelKey(key)
 	if lfuValue.Freq == this.minFloor && this.freqFloor[lfuValue.Freq].Len() == 0 {
@@ -46,7 +49,7 @@ func (this *LFULocalCache) Get(key string) interface{} {
 	return lfuValue.Value
 }
 
-func (this *LFULocalCache) Set(key string, value interface{}) error {
+func (this *LFULocalcache) Set(key string, value interface{}) error {
 	this.Lock()
 	defer this.Unlock()
 	if len(this.cacheMap) >= this.size {
@@ -72,15 +75,15 @@ func (this *LFULocalCache) Set(key string, value interface{}) error {
 	return nil
 }
 
-func (this *LFULocalCache) DumpFile() {
+func (this *LFULocalcache) DumpFile() {
 
 }
 
-func (this *LFULocalCache) ImportFile(filename string) {
+func (this *LFULocalcache) ImportFile(filename string) {
 
 }
 
-func (this *LFULocalCache) CacheToMap() map[string]interface{} {
+func (this *LFULocalcache) CacheToMap() map[string]interface{} {
 	res := make(map[string]interface{})
 	for k, _ := range this.cacheMap {
 		res[k] = map[string]interface{}{
