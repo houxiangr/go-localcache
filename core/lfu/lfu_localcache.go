@@ -12,13 +12,12 @@ type LFULocalCache struct {
 	freqFloor map[int]*ttypes.LinkedMap
 	minFloor  int
 
-	lock sync.Mutex
+	sync.Mutex
 }
 
 func (this *LFULocalCache) Start(variable map[string]interface{}) error {
 	this.cacheMap = make(map[string]*ttypes.LFUValue)
 	this.freqFloor = make(map[int]*ttypes.LinkedMap)
-	this.lock = sync.Mutex{}
 	var ok bool
 	this.size, ok = variable[SizeKey].(int)
 	if !ok {
@@ -28,6 +27,8 @@ func (this *LFULocalCache) Start(variable map[string]interface{}) error {
 }
 
 func (this *LFULocalCache) Get(key string) interface{} {
+	this.Lock()
+	defer this.Unlock()
 	lfuValue := this.cacheMap[key]
 
 	this.freqFloor[lfuValue.Freq].DelKey(key)
@@ -46,6 +47,8 @@ func (this *LFULocalCache) Get(key string) interface{} {
 }
 
 func (this *LFULocalCache) Set(key string, value interface{}) error {
+	this.Lock()
+	defer this.Unlock()
 	if len(this.cacheMap) >= this.size {
 		targetKey := this.freqFloor[this.minFloor].GetHead().GetKey()
 		this.freqFloor[this.minFloor].DelHead()
@@ -66,7 +69,6 @@ func (this *LFULocalCache) Set(key string, value interface{}) error {
 	this.freqFloor[lfuValue.Freq].SetTail(key)
 
 	this.minFloor = 1
-	this.freqFloor[1].Range()
 	return nil
 }
 

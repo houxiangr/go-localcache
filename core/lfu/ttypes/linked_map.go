@@ -84,6 +84,10 @@ func (this *LinkedMap) GetHead() *LinkedNode {
 	return this.head
 }
 
+func (this *LinkedMap) GetTail() *LinkedNode {
+	return this.tail
+}
+
 func (this LinkedNode) GetKey() string {
 	return this.key
 }
@@ -94,5 +98,4 @@ func (this LinkedMap) Range() {
 		fmt.Println(start.key)
 		start = start.nextNode
 	}
-	fmt.Println("---------")
 }
